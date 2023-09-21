@@ -1,0 +1,22 @@
+version: '2'
+services:
+  web:
+    image: searxng/searxng:2023.5.10-cb1c3741
+    volumes:
+      - /opt/volumes/searxng:/etc/searxng
+    restart: unless-stopped
+    networks:
+      - web
+    environment:
+      BASE_URL: $SUBDOMAIN.$DOMAIN
+      INSTANCE_NAME: $INSTANCE_NAME
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=8080"
+      - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only"
+      - "traefik.enable=true"
+
+networks:
+  web:
+    external: true
+    name: web
