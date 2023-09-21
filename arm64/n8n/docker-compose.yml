@@ -1,0 +1,23 @@
+version: '2'
+services:
+  web:
+    image: n8nio/n8n:1.6.1
+    restart: unless-stopped
+    volumes:
+      - n8n:/home/node/.n8n
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=5678"
+      - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only"
+      - "traefik.enable=true"
+    environment:
+      - WEBHOOK_TUNNEL_URL=$WEBHOOK_TUNNEL_URL
+      - WEBHOOK_URL=$WEBHOOK_URL
+
+networks:
+  default:
+    external: true
+    name: web
+
+volumes:
+  n8n:
