@@ -15,7 +15,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/volumes/traefik/traefik.toml:/traefik.toml
       - /opt/volumes/traefik/acme.json:/acme.json
-    container_name: ingress
     labels:
       - "traefik.http.routers.dashboard.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.routers.dashboard.service=api@internal"
