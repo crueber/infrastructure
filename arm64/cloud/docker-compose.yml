@@ -1,0 +1,43 @@
+version: '2'
+services:
+  web:
+    image: nextcloud:26.0.5
+    volumes:
+      - cloud_data:/var/www/html
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - web
+      - clouddb
+    environment:
+      MARIADB_AUTO_UPGRADE: "true"
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=80"
+      - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only,$SUBDOMAIN,${SUBDOMAIN}dav"
+      - "traefik.http.middlewares.$SUBDOMAIN.headers.customresponseheaders.Strict-Transport-Security=max-age=15552000; includeSubDomains"
+      - "traefik.http.middlewares.${SUBDOMAIN}dav.redirectregex.regex=^https://$SUBDOMAIN.$DOMAIN/.well-known/(card|cal)dav(.*)"
+      - "traefik.http.middlewares.${SUBDOMAIN}dav.redirectregex.replacement=https://$SUBDOMAIN.$DOMAIN/remote.php/dav$${2}"
+      - "traefik.enable=true"
+
+  db:
+    image: mariadb:10.3
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+
+    networks:
+     - clouddb
+    volumes:
+      - cloud_db:/var/lib/mysql
+
+networks:
+  clouddb:
+    name: clouddb
+  web:
+    external: true
+    name: web
+
+volumes:
+  cloud_data:
+  cloud_db:
