@@ -24,5 +24,4 @@ services:
       - "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
 networks:
   web:
-    external:
-      name: web
+    name: web
