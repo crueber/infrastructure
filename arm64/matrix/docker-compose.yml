@@ -1,0 +1,52 @@
+version: '2'
+
+services:
+  synapse:
+    image: matrixdotorg/synapse:v1.83.0
+    volumes:
+      - synapse-data:/data
+    ports:
+      - 8008:8008
+    restart: always
+    labels:
+      - "traefik.http.routers.$SYNAPSESUBDOMAIN.rule=Host(`$SYNAPSESUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.$SYNAPSESUBDOMAIN.loadbalancer.server.port=8008"
+      - "traefik.enable=true"
+    healthcheck:
+      test: ["CMD", "curl", "-fSs", "http://localhost:8008/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  nginx:
+    image: nginx:latest
+    restart: "unless-stopped"
+    volumes:
+      - "/opt/volumes/matrix.conf:/etc/nginx/conf.d/matrix.conf"
+      - synapse-matrix-www:/var/www/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.$MATRIXSUBDOMAIN.loadbalancer.server.port=80"
+      - "traefik.http.routers.$MATRIXSUBDOMAIN.rule=Host(`$MATRIXSUBDOMAIN.$DOMAIN`)"
+
+  riot:
+    image: bubuntux/element-web:v1.9.0
+    volumes:
+      - "/opt/element-config.json:/etc/element-web/config.json"
+    restart: always
+    labels:
+      - "traefik.http.routers.$RIOTSUBDOMAIN.rule=Host(`$RIOTSUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.$RIOTSUBDOMAIN.loadbalancer.server.port=80"
+      - "traefik.http.routers.$RIOTSUBDOMAIN.middlewares=https-only"
+      - "traefik.enable=true"
+
+
+networks:
+  default:
+    external: true
+    name: web
+
+volumes:
+  synapse-matrix-www:
+  synapse-data:
