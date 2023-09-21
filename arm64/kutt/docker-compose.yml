@@ -1,0 +1,73 @@
+version: "3"
+
+services:
+  kutt:
+    image: kutt/kutt
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    command: ["./wait-for-it.sh", "postgres:5432", "--", "npm", "start"]
+    ports:
+      - "3000:3000"
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=3000"
+      - "traefik.enable=true"
+    environment:
+      DB_HOST: $DB_HOST
+      DB_NAME: $DB_NAME
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      REDIS_HOST: $REDIS_HOST
+      SITE_NAME: $SITE_NAME
+      DEFAULT_DOMAIN: $DEFAULT_DOMAIN
+      LINK_LENGTH: $LINK_LENGTH
+      DISALLOW_REGISTRATION: $DISALLOW_REGISTRATION
+      DISALLOW_ANONYMOUS_LINKS: $DISALLOW_ANONYMOUS_LINKS
+      CUSTOM_DOMAIN_USE_HTTPS: $CUSTOM_DOMAIN_USE_HTTPS
+      DEFAULT_MAX_STATS_PER_LINK: $DEFAULT_MAX_STATS_PER_LINK
+      JWT_SECRET: $JWT_SECRET
+      ADMIN_EMAILS: $ADMIN_EMAILS
+      REPORT_EMAIL: $REPORT_EMAIL
+      CONTACT_EMAIL: $CONTACT_EMAIL
+      MAIL_USER: $MAIL_USER
+      MAIL_HOST: $MAIL_HOST
+      MAIL_PORT: $MAIL_PORT
+      MAIL_SECURE: $MAIL_SECURE
+      MAIL_PASSWORD: $MAIL_PASSWORD
+      MAIL_FROM: $MAIL_FROM
+    networks:
+     - default
+     - kutt
+
+  redis:
+    image: redis:6.0-alpine
+    restart: always
+    volumes:
+      - kutt_redis_data:/data
+    networks:
+     - kutt
+
+  postgres:
+    image: postgres:12-alpine
+    restart: always
+    volumes:
+      - kutt_postgres_data:/var/lib/postgresql/data
+    networks:
+     - kutt
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+
+networks:
+  kutt:
+    name: kuttdb
+  default:
+    external: true
+    name: web
+
+volumes:
+  kutt_redis_data:
+  kutt_postgres_data:
