@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  traefik:
+    image: traefik:2.10.4
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 2288:2288
+      - 8080:8080
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/volumes/traefik/traefik.toml:/traefik.toml
+      - /opt/volumes/traefik/acme.json:/acme.json
+    container_name: ingress
+    labels:
+      - "traefik.http.routers.dashboard.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth-users,https-only"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.auth-users.digestauth.users=$USERS"
+      - "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
+networks:
+  web:
+    external:
+      name: web
