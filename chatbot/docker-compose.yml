@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  chatbot:
+    image: ghcr.io/mckaywrigley/chatbot-ui:main@sha256:d97754126558cdadeaaa7003c01d94f717b089c0c659f0f3cfe2da05e8927332
+    restart: unless-stopped
+    ports:
+      - "3000"
+    networks:
+      - web
+    environment:
+      - OPENAI_API_KEY=${OPENAI_KEY}
+    labels:
+      - "traefik.http.routers.${SUBDOMAIN}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.services.${SUBDOMAIN}.loadbalancer.server.port=3000"
+      - "traefik.http.routers.${SUBDOMAIN}.middlewares=auth-users,https-only"
+      - "traefik.enable=true"
+
+networks:
+  web:
+    external: true
+    name: web
