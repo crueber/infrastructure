@@ -1,0 +1,43 @@
+version: '2'
+services:
+  web:
+    image: gitea/gitea:1.20.4
+    volumes:
+      - /opt/volumes/gitea/data:/data
+    ports:
+      - "3000"
+      - "2288"
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - default
+      - giteadb
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=3000"
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.${SUBDOMAIN}ssh.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.${SUBDOMAIN}ssh.entrypoints=sshother"
+      - "traefik.tcp.services.${SUBDOMAIN}ssh.loadbalancer.server.port=2288"
+
+  db:
+    image: mariadb:10.4.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+    networks:
+      - giteadb
+    volumes:
+      - /opt/volumes/gitea/mysql:/var/lib/mysql
+
+networks:
+  giteadb:
+    name: giteadb
+  default:
+    external: true
+    name: web
