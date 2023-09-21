@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  opengist:
+    image: ghcr.io/thomiceli/opengist:1.4.2
+    restart: unless-stopped
+    ports:
+      - "6157:6157"
+    volumes:
+      - gist:/root/.opengist
+    networks:
+      - web
+    environment:
+      CONFIG: |
+        log-level: $LOG_LEVEL
+        gitea.client-key: $GITEA_CLIENT_KEY
+        gitea.secret: $GITEA_SECRET
+        gitea.url: $GITEA_URL
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=6157"
+      - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only"
+      - "traefik.enable=true"
+
+volumes:
+  gist:
+
+networks:
+  web:
+    external: true
+    name: web
