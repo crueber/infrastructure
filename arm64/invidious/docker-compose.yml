@@ -1,0 +1,61 @@
+version: "3"
+services:
+  invidious:
+    image: quay.io/invidious/invidious:ac0c0609bb8b652e630c3603cd9dbb1c87fbdf44-arm64
+    restart: unless-stopped
+    user: 1000:1000
+    ports:
+      - "3000"
+    networks:
+      - invid
+      - web
+    environment:
+      # https://github.com/iv-org/invidious/blob/master/config/config.example.yml
+      INVIDIOUS_CONFIG: |
+        db:
+          dbname: $POSTGRES_DB
+          user: $POSTGRES_USER
+          password: $POSTGRES_PASSWORD
+          host: db
+          port: 5432
+        check_tables: true
+        external_port: 443
+        domain: $SUBDOMAIN.$DOMAIN
+        statistics_enabled: false
+        https_only: true
+        check_tables: true
+        captcha_enabled: false
+        admins: ["$ADMIN"]
+        hmac_key: "$HMAC"
+    healthcheck:
+      test: wget -nv --tries=1 --spider http://127.0.0.1:3000/api/v1/comments/jNQXAC9IVRw || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 2
+    depends_on:
+      db:
+        condition: service_healthy
+    labels:
+      - "traefik.http.routers.video.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.video.loadbalancer.server.port=3000"
+      - "traefik.enable=true"
+
+  db:
+    image: docker.io/library/postgres:14
+    restart: unless-stopped
+    networks:
+      - invid
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+
+volumes:
+  postgresdata:
+
+networks:
+  invid:
+    internal: true
+  web:
+    external: true
+    name: web
