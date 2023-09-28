@@ -7,8 +7,8 @@ services:
     ports:
       - "6157:6157"
     volumes:
-      - gistconfig:/root/.opengist
-      - opengist:/opengist
+      - /opt/volumes/opengist/gistconfig:/root/.opengist
+      - /opt/volumes/opengist/opengist:/opengist
     networks:
       - web
     environment:
