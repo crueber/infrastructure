@@ -8,7 +8,7 @@ services:
     ports:
       - '3001'
     volumes:
-      - uptime:/app/data
+      - /opt/volumes/uptime/uptime:/app/data
     labels:
       - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=3001"
