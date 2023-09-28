@@ -4,7 +4,7 @@ services:
   synapse:
     image: matrixdotorg/synapse:v1.83.0
     volumes:
-      - synapse-data:/data
+      - /opt/volumes/synapse/synapse-data:/data
     ports:
       - 8008:8008
     restart: always
@@ -23,8 +23,8 @@ services:
     image: nginx:latest
     restart: "unless-stopped"
     volumes:
-      - "/opt/volumes/matrix.conf:/etc/nginx/conf.d/matrix.conf"
-      - synapse-matrix-www:/var/www/
+      - "/opt/volumes/synapse/matrix.conf:/etc/nginx/conf.d/matrix.conf"
+      - /opt/volumes/synapse/synapse-matrix-www:/var/www/
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.$MATRIXSUBDOMAIN.loadbalancer.server.port=80"
@@ -33,7 +33,7 @@ services:
   riot:
     image: bubuntux/element-web:v1.9.0
     volumes:
-      - "/opt/element-config.json:/etc/element-web/config.json"
+      - "/opt/volumes/synapse/element-config.json:/etc/element-web/config.json"
     restart: always
     labels:
       - "traefik.http.routers.$RIOTSUBDOMAIN.rule=Host(`$RIOTSUBDOMAIN.$DOMAIN`)"
@@ -41,12 +41,7 @@ services:
       - "traefik.http.routers.$RIOTSUBDOMAIN.middlewares=https-only"
       - "traefik.enable=true"
 
-
 networks:
   default:
     external: true
     name: web
-
-volumes:
-  synapse-matrix-www:
-  synapse-data:
