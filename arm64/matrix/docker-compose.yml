@@ -23,7 +23,7 @@ services:
     image: nginx:latest
     restart: "unless-stopped"
     volumes:
-      - "/opt/volumes/synapse/matrix.conf:/etc/nginx/conf.d/matrix.conf"
+      - /opt/volumes/synapse/matrix.conf:/etc/nginx/conf.d/matrix.conf
       - /opt/volumes/synapse/synapse-matrix-www:/var/www/
     labels:
       - "traefik.enable=true"
@@ -33,7 +33,7 @@ services:
   riot:
     image: bubuntux/element-web:v1.9.0
     volumes:
-      - "/opt/volumes/synapse/element-config.json:/etc/element-web/config.json"
+      - /opt/volumes/synapse/element-config.json:/etc/element-web/config.json
     restart: always
     labels:
       - "traefik.http.routers.$RIOTSUBDOMAIN.rule=Host(`$RIOTSUBDOMAIN.$DOMAIN`)"
