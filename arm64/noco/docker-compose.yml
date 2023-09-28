@@ -9,7 +9,7 @@ services:
       NC_DB: "pg://nocopgdb:5432?u=$POSTGRES_USER&p=$POSTGRES_PASSWORD&d=$POSTGRES_DB"
     restart: unless-stopped
     volumes: 
-      - "nc_data:/usr/app/data"
+      - /opt/volumes/noco/nc_data:/usr/app/data
     labels:
       - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=8080"
@@ -32,14 +32,9 @@ services:
       timeout: 2s
     restart: unless-stopped
     volumes: 
-      - "nc_db:/var/lib/postgresql/data"
+      - /opt/volumes/noco/nc_db:/var/lib/postgresql/data
     networks:
       - noco
-
-volumes: 
-  nc_db: {}
-  nc_data: {}
-
 
 networks:
   noco:
