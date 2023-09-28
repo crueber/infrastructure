@@ -4,7 +4,7 @@ services:
   synapse:
     image: matrixdotorg/synapse:v1.83.0
     volumes:
-      - synapse-data:/data
+      - /opt/volumes/synapse/synapse-data:/data
     ports:
       - 8008:8008
     restart: always
@@ -45,6 +45,3 @@ networks:
   default:
     external: true
     name: web
-
-volumes:
-  synapse-data:
