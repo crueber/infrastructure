@@ -45,7 +45,7 @@ services:
     image: redis:6.0-alpine
     restart: always
     volumes:
-      - kutt_redis_data:/data
+      - /opt/volumes/kutt/kutt_redis_data:/data
     networks:
      - kutt
 
@@ -53,7 +53,7 @@ services:
     image: postgres:12-alpine
     restart: always
     volumes:
-      - kutt_postgres_data:/var/lib/postgresql/data
+      - /opt/volumes/kutt/kutt_postgres_data:/var/lib/postgresql/data
     networks:
      - kutt
     environment:
@@ -67,7 +67,3 @@ networks:
   default:
     external: true
     name: web
-
-volumes:
-  kutt_redis_data:
-  kutt_postgres_data:
