@@ -3,7 +3,7 @@ services:
   web:
     image: nextcloud:26.0.5
     volumes:
-      - cloud_data:/var/www/html
+      - /opt/volumes/cloud/cloud_data:/var/www/html
     depends_on:
       - db
     restart: unless-stopped
@@ -29,7 +29,7 @@ services:
     networks:
      - clouddb
     volumes:
-      - cloud_db:/var/lib/mysql
+      - /opt/volumes/cloud/cloud_db:/var/lib/mysql
 
 networks:
   clouddb:
@@ -37,7 +37,3 @@ networks:
   web:
     external: true
     name: web
-
-volumes:
-  cloud_data:
-  cloud_db:
