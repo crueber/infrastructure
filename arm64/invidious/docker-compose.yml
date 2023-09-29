@@ -46,12 +46,9 @@ services:
     networks:
       - invid
     volumes:
-      - postgresdata:/var/lib/postgresql/data
+      - /opt/volumes/invidious/postgresdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-
-volumes:
-  postgresdata:
 
 networks:
   invid:
