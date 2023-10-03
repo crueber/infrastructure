@@ -13,7 +13,7 @@ services:
     labels:
       - "traefik.http.routers.${SUBDOMAIN}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)"
       - "traefik.http.services.${SUBDOMAIN}.loadbalancer.server.port=3000"
-      - "traefik.http.routers.${SUBDOMAIN}.middlewares=basic-users,https-only"
+      - "traefik.http.routers.${SUBDOMAIN}.middlewares=digest-users,https-only"
       - "traefik.enable=true"
 
 networks:
