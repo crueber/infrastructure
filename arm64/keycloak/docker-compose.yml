@@ -53,7 +53,7 @@ services:
       KC_HEALTH_ENABLED: 'true'
       KC_METRICS_ENABLED: 'true'
       KC_HOSTNAME_URL: $URL
-      KC_PROXY: reencrypt
+      KC_PROXY: edge
       KEYCLOAK_ADMIN: $KEYCLOAK_ADMIN
       KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_PASSWORD
     networks:
