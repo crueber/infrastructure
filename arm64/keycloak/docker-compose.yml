@@ -48,7 +48,7 @@ services:
       JAVA_OPTS_APPEND: -Dkeycloak.profile.feature.upload_scripts=enabled
       KC_DB: postgres
       KC_DB_PASSWORD: $DBPASSWORD
-      KC_DB_URL: jdbc:postgresql://postgres/$DBNAME
+      KC_DB_URL: "jdbc:postgresql://postgres/$DBNAME"
       KC_DB_USERNAME: $DBUSER
       KC_HEALTH_ENABLED: 'true'
       KC_METRICS_ENABLED: 'true'
