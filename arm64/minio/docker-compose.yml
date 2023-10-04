@@ -17,9 +17,11 @@ services:
     labels:
       - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only"
+      - "traefik.http.routers.$SUBDOMAIN.service=$SUBDOMAIN"
       - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=9000"
       - "traefik.http.routers.$SUBDOMAIN2.rule=Host(`$SUBDOMAIN2.$DOMAIN`)"
       - "traefik.http.routers.$SUBDOMAIN2.middlewares=https-only"
+      - "traefik.http.routers.$SUBDOMAIN2.service=$SUBDOMAIN2"
       - "traefik.http.services.$SUBDOMAIN2.loadbalancer.server.port=9090"
       - "traefik.enable=true"
 
