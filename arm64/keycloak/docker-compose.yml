@@ -41,7 +41,7 @@ services:
   keycloak:
     image: keycloak/keycloak:22.0.3
     restart: always
-    command: ['start', '--optimized', '--db-driver=postgres']
+    command: ['start', '--db-driver=postgres']
     depends_on:
       - postgres
     environment:
