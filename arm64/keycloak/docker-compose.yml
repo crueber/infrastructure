@@ -1,0 +1,74 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    volumes:
+      - /opt/volumes/keycloak/pgdb:/var/lib/postgresql/data
+      #- ./sql:/docker-entrypoint-initdb.d/:ro # turn it on, if you need run init DB
+    environment:
+      POSTGRES_USER: $DBUSER
+      POSTGRES_PASSWORD: $DBPASSWORD
+      POSTGRES_DB: $DBNAME
+      POSTGRES_HOST: postgres
+    networks:
+      - keycloak
+
+  pgadmin:
+    image: dpage/pgadmin4:7.7
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@db.$SUBDOMAIN.$DOMAIN
+      PGADMIN_DEFAULT_PASSWORD: $DBPASSWORD
+    depends_on:
+      - postgres
+    networks:
+      - web
+      - keycloak
+    ports:
+      - "5050"
+    labels:
+      - "traefik.http.routers.${SUBDOMAIN}DB.rule=Host(`db.${SUBDOMAIN}.$DOMAIN`)"
+      - "traefik.http.routers.${SUBDOMAIN}DB.middlewares=https-only"
+      - "traefik.http.services.${SUBDOMAIN}DB.loadbalancer.server.port=5050"
+      - "traefik.enable=true"
+
+  keycloak:
+    image: keycloak/keycloak:22.0.3
+    restart: always
+    command: ['start', '--optimized']
+    depends_on:
+      - postgres
+    environment:
+      JAVA_OPTS_APPEND: -Dkeycloak.profile.feature.upload_scripts=enabled
+      KC_DB_PASSWORD: $DBPASSWORD
+      KC_DB_URL: jdbc:postgresql://postgres/$DBNAME
+      KC_DB_USERNAME: $DBUSER
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+      KC_HOSTNAME_URL: $URL
+      KC_PROXY: reencrypt
+      KEYCLOAK_ADMIN: $KEYCLOAK_ADMIN
+      KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_PASSWORD
+    networks:
+      - web
+      - keycloak
+    ports:
+      - "8080"
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=8080"
+      - "traefik.enable=true"
+
+networks:
+  keycloak:
+    name: keycloak
+  web:
+    external: true
+    name: web
