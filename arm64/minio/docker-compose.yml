@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  minio:
+    image: 'bitnami/minio:2023.9.30'
+    volumes:
+      - /opt/volumes/minio/minio:/bitnami/minio/data
+    ports:
+      - 9000
+      - 9001
+    environment:
+      - MINIO_ROOT_USER=$USER
+      - MINIO_ROOT_PASSWORD=$PASS
+      - MINIO_DEFAULT_BUCKETS='bucket'
+      - MINIO_SCHEME=http
+      - MINIO_SERVER_URL=$SERVER_URL
+    networks:
+      - web
+    labels:
+      - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.routers.$SUBDOMAIN.middlewares=https-only"
+      - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=9000"
+      - "traefik.http.routers.$SUBDOMAIN2.rule=Host(`$SUBDOMAIN2.$DOMAIN`)"
+      - "traefik.http.routers.$SUBDOMAIN2.middlewares=https-only"
+      - "traefik.http.services.$SUBDOMAIN2.loadbalancer.server.port=9001"
+      - "traefik.enable=true"
+
+networks:
+  web:
+    external: true
