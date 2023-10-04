@@ -23,8 +23,10 @@ services:
     image: dpage/pgadmin4:7.7
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: postgres@db.$SUBDOMAIN.$DOMAIN
+      PGADMIN_DEFAULT_EMAIL: postgres@${SUBDOMAIN}db.$DOMAIN
       PGADMIN_DEFAULT_PASSWORD: $DBPASSWORD
+      PGADMIN_LISTEN_ADDRESS: '0.0.0.0'
+      PGADMIN_LISTEN_PORT: '5050'
     depends_on:
       - postgres
     networks:
@@ -33,15 +35,15 @@ services:
     ports:
       - "5050"
     labels:
-      - "traefik.http.routers.${SUBDOMAIN}DB.rule=Host(`${SUBDOMAIN}db.$DOMAIN`)"
-      - "traefik.http.routers.${SUBDOMAIN}DB.middlewares=https-only"
-      - "traefik.http.services.${SUBDOMAIN}DB.loadbalancer.server.port=5050"
+      - "traefik.http.routers.${SUBDOMAIN}db.rule=Host(`${SUBDOMAIN}db.$DOMAIN`)"
+      - "traefik.http.routers.${SUBDOMAIN}db.middlewares=https-only"
+      - "traefik.http.services.${SUBDOMAIN}db.loadbalancer.server.port=5050"
       - "traefik.enable=true"
 
   keycloak:
     image: keycloak/keycloak:22.0.3
     restart: always
-    command: ['start', '--db-driver=postgres']
+    command: ['start', '--optimized', '--db-driver=postgres']
     depends_on:
       - postgres
     environment:
