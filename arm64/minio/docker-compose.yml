@@ -6,9 +6,6 @@ services:
     command: ['server', '--console-address', ':9090']
     volumes:
       - /opt/volumes/minio/minio:/mnt/data
-    ports:
-      - 9000
-      - 9090
     environment:
       - MINIO_ROOT_USER=$USER
       - MINIO_ROOT_PASSWORD=$PASS
@@ -29,3 +26,4 @@ services:
 networks:
   web:
     external: true
+    name: web
