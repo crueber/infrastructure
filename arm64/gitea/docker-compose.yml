@@ -20,6 +20,7 @@ services:
       - "traefik.enable=true"
       - "traefik.tcp.routers.${SUBDOMAIN}ssh.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.${SUBDOMAIN}ssh.entrypoints=sshother"
+      - "traefik.tcp.routers.${SUBDOMAIN}ssh.service=${SUBDOMAIN}ssh"
       - "traefik.tcp.services.${SUBDOMAIN}ssh.loadbalancer.server.port=2288"
 
   db:
