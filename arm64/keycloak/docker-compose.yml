@@ -33,7 +33,7 @@ services:
     ports:
       - "5050"
     labels:
-      - "traefik.http.routers.${SUBDOMAIN}DB.rule=Host(`db.${SUBDOMAIN}.$DOMAIN`)"
+      - "traefik.http.routers.${SUBDOMAIN}DB.rule=Host(`${SUBDOMAIN}db.$DOMAIN`)"
       - "traefik.http.routers.${SUBDOMAIN}DB.middlewares=https-only"
       - "traefik.http.services.${SUBDOMAIN}DB.loadbalancer.server.port=5050"
       - "traefik.enable=true"
