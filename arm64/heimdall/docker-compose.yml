@@ -17,6 +17,7 @@ services:
     labels:
       - "traefik.http.routers.heimdall.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.services.heimdall.loadbalancer.server.port=80"
+      - "traefik.http.routers.${SUBDOMAIN}.middlewares=basic-users,https-only"
       - "traefik.enable=true"
 
 networks:
