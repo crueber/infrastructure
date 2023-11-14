@@ -1,0 +1,25 @@
+version: "2.1"
+services:
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:2.5.3
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /opt/volumes/heimdall/config:/config
+    networks:
+      - web
+    ports:
+      - 80:80
+    restart: unless-stopped
+    labels:
+      - "traefik.http.routers.heimdall.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.heimdall.loadbalancer.server.port=80"
+      - "traefik.enable=true"
+
+networks:
+  web:
+    external: true
+    name: web
