@@ -1,7 +1,7 @@
 version: "2.1"
 services:
   webdav:
-    image: ugeek/webdav:arm
+    image: ugeek/webdav:arm64
     environment:
       - UDI=1000
       - GID=1000
