@@ -8,6 +8,7 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /opt/sync:/media
+      - /opt/volumes/webdav/passwd:/opt/nginx/conf/htpasswd:ro
     networks:
       - web
     ports:
