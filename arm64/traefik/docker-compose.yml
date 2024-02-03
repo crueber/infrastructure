@@ -18,7 +18,7 @@ services:
     labels:
       - "traefik.http.routers.dashboard.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.routers.dashboard.middlewares=auth-users,https-only"
+      - "traefik.http.routers.dashboard.middlewares=basic-users,https-only"
       - "traefik.enable=true"
       - "traefik.http.middlewares.digest-users.digestauth.users=$DIGESTUSERS"
       - "traefik.http.middlewares.basic-users.basicauth.users=$BASICUSERS"
