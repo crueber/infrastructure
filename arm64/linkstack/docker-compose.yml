@@ -33,5 +33,5 @@ networks:
       name: web
 
 volumes:
-  linkstack_data:
+  linkstack:
 
