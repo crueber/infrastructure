@@ -22,7 +22,6 @@ services:
       - web
     labels:
       - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
-      - "traefik.http.routers.$SUBDOMAIN.tls.passthrough=true"
       - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=443"
       - "traefik.enable=true"
 networks:
