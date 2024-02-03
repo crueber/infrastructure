@@ -23,8 +23,9 @@ services:
     labels:
       - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=80"
-      - "traefik.https.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
-      - "traefik.https.services.$SUBDOMAIN.loadbalancer.server.port=443"
+      - "traefik.http.routers.secure$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.routers.secure$SUBDOMAIN.entrypoints=websecure"
+      - "traefik.http.services.secure$SUBDOMAIN.loadbalancer.server.port=443"
       - "traefik.enable=true"
 
 networks:
