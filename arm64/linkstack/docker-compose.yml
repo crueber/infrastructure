@@ -14,7 +14,7 @@ services:
       PUID: 1000
       PGID: 1000
     volumes:
-      - /opt/volumes/linkstack/data:/htdocs
+      - linkstack:/htdocs
     ports:
       - "80"
     restart: unless-stopped
@@ -31,4 +31,7 @@ networks:
   web:
     external:
       name: web
+
+volumes:
+  linkstack_data:
 
