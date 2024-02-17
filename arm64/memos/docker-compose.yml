@@ -1,0 +1,20 @@
+version: "3.0"
+services:
+  memos:
+    image: neosmemo/memos:stable
+    volumes:
+      - /opt/volumes/memos:/var/opt/memos
+    networks:
+      - web
+    ports:
+      - 5230:5230
+    restart: unless-stopped
+    labels:
+      - "traefik.http.routers.memos.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.memos.loadbalancer.server.port=80"
+      - "traefik.enable=true"
+
+networks:
+  web:
+    external: true
+    name: web
