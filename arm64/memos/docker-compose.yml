@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.http.routers.memos.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
-      - "traefik.http.services.memos.loadbalancer.server.port=80"
+      - "traefik.http.services.memos.loadbalancer.server.port=5230"
       - "traefik.enable=true"
 
 networks:
