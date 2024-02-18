@@ -17,8 +17,6 @@ services:
       - matomodb
     volumes:
       - /opt/volumes/matomo/html:/var/www/html:z
-    ports:
-      - 80:80
     networks:
       - matomo
       - web
