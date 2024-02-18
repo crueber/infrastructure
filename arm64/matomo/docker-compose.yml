@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  matomodb:
+  maria:
     image: mariadb:10.11
     command: --max-allowed-packet=64MB
     restart: unless-stopped
@@ -13,8 +13,8 @@ services:
   matomo:
     image: matomo:5
     restart: unless-stopped
-    links:
-      - matomodb
+    depends_on:
+      - maria
     volumes:
       - /opt/volumes/matomo/html:/var/www/html:z
     networks:
@@ -30,4 +30,4 @@ networks:
     external: true
     name: web
   matomo:
-    name: matomodb
+    name: matomo
