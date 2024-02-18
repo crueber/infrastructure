@@ -7,11 +7,8 @@ services:
     restart: unless-stopped
     volumes:
       - /opt/volumes/matomo/db:/var/lib/mysql:Z
-    environment:
-      - MARIADB_AUTO_UPGRADE=1
-      - MARIADB_DISABLE_UPGRADE_BACKUP=1
-    env_file:
-      - ./db.env
+    networks:
+     - matomo
 
   matomo:
     image: matomo:5
@@ -23,10 +20,8 @@ services:
     ports:
       - 9000:9000
     networks:
+      - matomo
       - web
-    environment:
-      - MATOMO_DATABASE_HOST=db
-      - PHP_MEMORY_LIMIT=2048M
     labels:
       - "traefik.http.routers.memos.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.services.memos.loadbalancer.server.port=9000"
@@ -36,3 +31,5 @@ networks:
   web:
     external: true
     name: web
+  matomo:
+    name: matomodb
