@@ -21,8 +21,8 @@ services:
       - matomo
       - web
     labels:
-      - "traefik.http.routers.memos.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
-      - "traefik.http.services.memos.loadbalancer.server.port=80"
+      - "traefik.http.routers.matomo.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.matomo.loadbalancer.server.port=80"
       - "traefik.enable=true"
 
 networks:
