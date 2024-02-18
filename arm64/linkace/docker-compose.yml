@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  maria:
+    image: mariadb:10.11
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+    restart: unless-stopped
+    volumes:
+      - /opt/volumes/linkace/db:/var/lib/mysql
+    networks:
+     - linkace
+    environment:
+      - MARIADB_ROOT_PASSWORD=$MARIADB_ROOT_PASSWORD
+      - MARIADB_DATABASE=$MARIADB_DATABASE
+      - MARIADB_USER=$MARIADB_USER
+      - MARIADB_PASSWORD=$MARIADB_PASSWORD
+
+  linkace:
+    image: linkace/linkace:simple
+    restart: unless-stopped
+    depends_on:
+      - maria
+    volumes:
+      - /opt/volumes/linkace/logs:/app/storage/logs
+    networks:
+      - linkace
+      - web
+    labels:
+      - "traefik.http.routers.linkace.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
+      - "traefik.http.services.linkace.loadbalancer.server.port=80"
+      - "traefik.enable=true"
+    environment:
+      - APP_KEY=base64:jpzRiL9ceL5...
+      - DB_HOST=maria
+      - DB_DATABASE=$MARIADB_DATABASE
+      - DB_USERNAME=$MARIADB_USER
+      - DB_PASSWORD=$MARIADB_PASSWORD
+
+networks:
+  web:
+    external: true
+    name: web
+  linkace:
+    name: linkace
