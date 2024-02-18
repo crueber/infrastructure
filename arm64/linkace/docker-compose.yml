@@ -30,7 +30,7 @@ services:
       - "traefik.http.services.linkace.loadbalancer.server.port=80"
       - "traefik.enable=true"
     environment:
-      - APP_KEY=base64:jpzRiL9ceL5...
+      - APP_KEY=$APP_KEY
       - DB_HOST=maria
       - DB_DATABASE=$MARIADB_DATABASE
       - DB_USERNAME=$MARIADB_USER
