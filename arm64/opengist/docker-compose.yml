@@ -12,11 +12,10 @@ services:
     networks:
       - web
     environment:
-      CONFIG: |
-        log-level: $LOG_LEVEL
-        gitea.client-key: $GITEA_CLIENT_KEY
-        gitea.secret: $GITEA_SECRET
-        gitea.url: $GITEA_URL
+      - OG_LOG_LEVEL=$LOG_LEVEL
+      - OG_GITEA_CLIENT_KEY=$GITEA_CLIENT_KEY
+      - OG_GITEA_SECRET=$GITEA_SECRET
+      - OG_GITEA_URL=$GITEA_URL
     labels:
       - "traefik.http.routers.$SUBDOMAIN.rule=Host(`$SUBDOMAIN.$DOMAIN`)"
       - "traefik.http.services.$SUBDOMAIN.loadbalancer.server.port=6157"
